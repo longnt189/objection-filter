@@ -37,7 +37,7 @@ module.exports = class FilterQueryBuilder {
    */
   constructor(Model, trx, options = {}) {
     this.Model = Model;
-    this._builder = Model.query(trx);
+    this._builder = Model.query(trx).page(0, 50);
 
     const { operators = {}, onAggBuild } = options;
 
