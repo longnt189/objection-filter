@@ -86,6 +86,7 @@ There are a number of built-in operations that can be applied to columns (custom
 4. **$in** - Whether the target value is in an array of values
 5. **$exists** - Whether a property is not null
 6. **$or** - A top level _OR_ conditional operator
+**CUSTOM: $likeLower** - The SQL _LIKE_ operator, can be used with expressions such as _ab%_ to search for strings that start with _ab_ and _no distinction between upper and lowercase letters_
 
 For any operators not available (eg _ILIKE_, refer to the custom operators section below).
 
