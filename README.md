@@ -46,7 +46,7 @@ Available filter properties include:
 // GET /api/Customers
 {
   // Filtering and eager loading
-  "eager": {
+  "filter": {
     // Top level $where filters on the root model
     "$where": {
       "firstName": "John"
@@ -74,7 +74,7 @@ Available filter properties include:
 }
 ```
 
-> The `where` operator from < v1.0.0 is still available and can be combined with the `eager` string type notation. The same is applicable to the `require` operator. For filtering going forward, it's recommended to use the objection object-notation for eager loading along with `$where` definitions at each level.
+> The `where` operator from < v1.0.0 is still available and can be combined with the `filter` string type notation. The same is applicable to the `require` operator. For filtering going forward, it's recommended to use the objection object-notation for eager loading along with `$where` definitions at each level.
 
 # Filter Operators
 
@@ -95,7 +95,7 @@ For any operators not available (eg _ILIKE_, refer to the custom operators secti
 An example of operator usage
 ```json
 {
-  "eager": {
+  "filter": {
     "$where": {
       "property0": "Exactly Equals",
       "property1": {
@@ -141,7 +141,7 @@ const options = {
 
 buildFilter(Person, null, options)
   .build({
-    eager: {
+    filter: {
       $where: {
         firstName: { $ilike: 'John' }
       }
@@ -152,14 +152,14 @@ buildFilter(Person, null, options)
 The `$ilike` operator can now be used as a new operator and will use the custom operator callback specified.
 
 # Logical Expressions
-Logical expressions can be applied to both the `eager` and `require` helpers. The `where` top level operator will eventually be deprecated and replaced by the new `eager` [object notation](https://vincit.github.io/objection.js/#relationexpression-object-notation) in objection.js.
+Logical expressions can be applied to both the `filter` and `require` helpers. The `where` top level operator will eventually be deprecated and replaced by the new `filter` [object notation](https://vincit.github.io/objection.js/#relationexpression-object-notation) in objection.js.
 
 #### Examples using `$where`
 The `$where` expression is used to "filter models". Given this, related fields between models can be mixed anywhere in the logical expression.
 
 ```json
 {
-  "eager": {
+  "filter": {
     "$where": {
       "$or": [
         { "city.country.name": "Australia" },
@@ -173,7 +173,7 @@ The `$where` expression is used to "filter models". Given this, related fields b
 Logical expressions can also be nested
 ```json
 {
-  "eager": {
+  "filter": {
     "$where": {
       "$and": {
         "name": "John",
@@ -191,7 +191,7 @@ Note that in these examples, all logical expressions come _before_ the property 
 
 ```json
 {
-  "eager": {
+  "filter": {
     "$where": {
       "$or": [
         { "city.country.name": "Australia" },
@@ -226,7 +226,7 @@ Transform a basic aggregation like this on a `GET /Customers` endpoint:
 
 ```js
 {
-  "eager": {
+  "filter": {
     "$aggregations": [
         {
           "type": "count",
