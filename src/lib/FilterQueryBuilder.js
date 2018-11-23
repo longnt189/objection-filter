@@ -51,7 +51,7 @@ module.exports = class FilterQueryBuilder {
       limit,
       offset,
       order,
-      eager,
+      filter,
     } = params;
 
     applyFields(fields, this._builder);
@@ -59,7 +59,7 @@ module.exports = class FilterQueryBuilder {
     applyRequire(params.require, this._builder, this.utils);
 
     applyOrder(order, this._builder);
-    applyEager(eager, this._builder, this.utils);
+    applyEager(filter, this._builder, this.utils);
     applyLimit(limit, offset, this._builder);
 
     return this._builder;
