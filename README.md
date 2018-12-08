@@ -26,7 +26,7 @@ Creating quick counts and sums on a model can speed up development significantly
 
 # Usage
 
-The filtering library can be applied onto every _findAll_ REST endpoint e.g. `GET /api/{Model}?filter={"limit": 1}`
+The filtering library can be applied onto every _findAll_ REST endpoint e.g. `GET /api/{Model}?filter={"name": "longnt189"}`
 
 A typical express route handler with a filter applied:
 ```js
@@ -47,23 +47,9 @@ Available filter properties include:
 {
   // Filtering and eager loading
   "filter": {
-    // Top level $where filters on the root model
-    "$where": {
-      "firstName": "John"
+      "firstName": "John",
       "profile.isActivated": true,
       "city.country": { "$like": "A" }
-    },
-    // Nested $where filters on each related model
-    "orders": {
-      "$where": {
-        "state.isComplete": true
-      },
-      "products": {
-        "$where": {
-          "category.name": { "$like": "A" }
-        }
-      }
-    }
   },
   // An objection.js order by expression
   "order": "firstName desc",
@@ -74,8 +60,7 @@ Available filter properties include:
 }
 ```
 
-> The `where` operator from < v1.0.0 is still available and can be combined with the `filter` string type notation. The same is applicable to the `require` operator. For filtering going forward, it's recommended to use the objection object-notation for eager loading along with `$where` definitions at each level.
-
+> Besides following these instructions, you can use `eager` operators at https://github.com/tandg-digital/objection-filter
 # Filter Operators
 
 There are a number of built-in operations that can be applied to columns (custom ones can also be created). These include:
@@ -96,30 +81,28 @@ An example of operator usage
 ```json
 {
   "filter": {
-    "$where": {
-      "property0": "Exactly Equals",
-      "property1": {
-        "$equals": 5
-      },
-      "property2": {
-        "$gt": 5
-      },
-      "property3": {
-        "$lt": 10,
-        "$gt": 5
-      },
-      "property4": {
-        "$in": [ 1, 2, 3 ]
-      },
-      "property5": {
-        "$exists": false
-      },
-      "property6": {
-        "$or": [
-          { "$in": [ 1, 2, 3 ] },
-          { "$equals": 100 }
-        ]
-      }
+    "property0": "Exactly Equals",
+    "property1": {
+      "$equals": 5
+    },
+    "property2": {
+      "$gt": 5
+    },
+    "property3": {
+      "$lt": 10,
+      "$gt": 5
+    },
+    "property4": {
+      "$in": [ 1, 2, 3 ]
+    },
+    "property5": {
+      "$exists": false
+    },
+    "property6": {
+      "$or": [
+        { "$in": [ 1, 2, 3 ] },
+        { "$equals": 100 }
+      ]
     }
   }
 }
@@ -150,110 +133,3 @@ buildFilter(Person, null, options)
 ```
 
 The `$ilike` operator can now be used as a new operator and will use the custom operator callback specified.
-
-# Logical Expressions
-Logical expressions can be applied to both the `filter` and `require` helpers. The `where` top level operator will eventually be deprecated and replaced by the new `filter` [object notation](https://vincit.github.io/objection.js/#relationexpression-object-notation) in objection.js.
-
-#### Examples using `$where`
-The `$where` expression is used to "filter models". Given this, related fields between models can be mixed anywhere in the logical expression.
-
-```json
-{
-  "filter": {
-    "$where": {
-      "$or": [
-        { "city.country.name": "Australia" },
-        { "city.code": "09" }
-      ]
-    }
-  }
-}
-```
-
-Logical expressions can also be nested
-```json
-{
-  "filter": {
-    "$where": {
-      "$and": {
-        "name": "John",
-        "$or": [
-          { "city.country.name": "Australia" },
-          { "city.code": { "$like": "01" }}
-        ]
-      }
-    }
-  }
-}
-```
-
-Note that in these examples, all logical expressions come _before_ the property name. However, logical expressions can also come _after_ the property name.
-
-```json
-{
-  "filter": {
-    "$where": {
-      "$or": [
-        { "city.country.name": "Australia" },
-        {
-          "city.code": {
-            "$or": [
-              { "$equals": "12" },
-              { "$like": "13" }
-            ]
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-The `$where` will apply to the relation that immediately precedes it in the tree, in the above case "city". The `$where` will apply to relations of the eager model using dot notation. For example, you can query `Customers`, eager load their `orders` and filter those orders by the `product.name`. Note that `product.name` is a related field of the order model, not the customers model.
-
-# Aggregations
-
-[Aggregations](doc/AGGREGATIONS.md) such as _count, sum, min, max, avg_ can be applied to the queried model.
-
-Additionally for any aggregations, you can use them in other expressions above including:
-
-* Filtering using `$where`
-* Ordering using `order`
-
-For more detailed descriptions of each feature, refer to the [aggregations section](doc/AGGREGATIONS.md).
-
-Transform a basic aggregation like this on a `GET /Customers` endpoint:
-
-```js
-{
-  "filter": {
-    "$aggregations": [
-        {
-          "type": "count",
-          "alias": "numberOfOrders",
-          "relation": "orders"
-        }
-    ]
-  }
-}
-```
-
-...into a result set like this:
-
-```json
-[
-  {
-    "firstName": "John",
-    "lastName": "Smith",
-    "numberOfOrders": 10
-  },{
-    "firstName": "Jane",
-    "lastName": "Bright",
-    "numberOfOrders": 5
-  },{
-    "firstName": "Greg",
-    "lastName": "Parker",
-    "numberOfOrders": 7
-  }
-]
-```
