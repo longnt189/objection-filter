@@ -52,14 +52,15 @@ module.exports = class FilterQueryBuilder {
       offset,
       order,
       filter,
+      eager
     } = params;
 
     applyFields(fields, this._builder);
-    applyWhere(params.where, this._builder, this.utils);
+    applyWhere(filter || {}, this._builder, this.utils);
     applyRequire(params.require, this._builder, this.utils);
 
     applyOrder(order, this._builder);
-    applyEager(filter, this._builder, this.utils);
+    applyEager(eager, this._builder, this.utils);
     applyLimit(limit, offset, this._builder);
 
     return this._builder;
